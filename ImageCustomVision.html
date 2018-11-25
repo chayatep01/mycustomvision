@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <title>Remember me</title>
+    <link rel="shortcut icon" type="image/png" href="ribbon.png" />
+    
+</head>
+<body>
+    <style type="text/css">
+           body {
+               text-align: center;
+               background-color:#EEDDC0;
+               margin:20px;
+           }
+           input[type=file] {
+  
+  cursor: pointer;
+  width: 280px;
+  height: 46px;
+  overflow: hidden;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  padding:5px;
+
+
+  
+}
+
+input[type=file]:before {
+  width: 74px;
+  height: 32px;
+  font-size: 16px;
+  line-height: 32px;
+  content: 'Browse';
+  display: block;
+  background: white;
+  border: 1px solid #000;
+  border-radius: .25rem;
+  padding: 0 10px;
+  text-align: center;
+  font-family: Helvetica, Arial, sans-serif;
+ 
+}
+
+input[type=file]::-webkit-file-upload-button {
+  visibility: hidden;
+}
+           
+
+
+    </style>
+
+<nav class="shadow navbar navbar-expand-lg navbar-light fixed-top" style="background-color: #F6E9CB;">
+  
+    <a class="navbar-brand" href="http://localhost/its351/homepage.php"> <img id="logo-brand" src="ribbon.png" width="30" height="30" class="d-inline-block align-top" alt=""> <strong>Remember me </strong></i></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="nav navbar-nav navbar-right">
+  
+        <li class="nav-item">
+          <a class="nav-link" href="http://localhost/its351/homepage.php" style="right:0">Home</a>
+        </li>
+  
+        <li class="nav-item">
+          <a class="nav-link" href="http://localhost/its351/search.php" style="right:0">Search</a>
+        </li>
+
+  
+        <li class="nav-item active">
+          <a class="nav-link" href="http://localhost/its351/index.php">Sign up/Login <span class="sr-only">(current)</span></a>
+        </li>
+        
+      </ul>
+    </div>
+  </nav>
+
+  
+    <div class="search" style="padding-top:50px;">
+   
+        <form method="post" accept-charset="utf-8" name="formImage">
+            <div class="text-center">
+                <img id="imageBefore" class="text-center" style="margin-bottom:0.5em;width:100%;height:auto;" />
+                <input type="file" style = "width:100%;"name="fileImage" id='fileImage' class="form-control">
+                
+            </div>
+        </form>
+        <div  style="margin-top:1em;">
+            <div>
+                <button id="image" onclick="snapshot()" class="form-control btn btn-primary">Search <i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="col-md-12 text-center">
+      <b><i><span id="textAPI" class="text-center"></span></i></b>
+    </div>
+
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  
+  
+   
+    
+    <script type="text/javascript">
+
+        var isFile=false;
+        //elements for taking the snapshot
+        function snapshot(){
+            if(this.isFile){
+                uploadSever();
+            }else{
+                alert("YOU MUST UPLOAD THE PHOTO!!");
+            }  
+        }
+
+        //show image before
+        function readURL(input) {
+          if(input.files&&input.files[0]){
+            var reader=new FileReader();
+            reader.onload=function(e){
+              $('#imageBefore').attr('src',e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+          }
+        }
+
+        //check type file
+        $("#fileImage").change(function(){
+            $('html,body').animate({ scrollTop: 9999 }, 'slow');
+            var isFile=checkTypeImage(this);
+            if(isFile){
+                readURL(this);
+            }else{
+                alert("UPLOAD .PNG OR .JPG FILE");
+            }
+        });
+        function checkTypeImage(input){
+            var file=input.files[0];
+            if(file){
+                var fileType=file["type"];
+                var ValidImageTypes=["image/jpeg","image/png","image/jpg"];
+                if($.inArray(fileType,ValidImageTypes)<0){
+                    this.isFile=false;
+                    return false;
+                }else{
+                    this.isFile=true;
+                    return true;
+                }
+            }else{
+                this.isFile=false;
+                $('#imageBefore').attr('src',"");
+                return true;
+            }
+        }
+
+        //upload image to Sever and get api
+        function uploadSever(){
+            var form=new FormData(document.forms["formImage"]);
+            //$("#image").html("PROCESSING <i class='fa fa-spinner fa-spin'></i>");
+            $("#textAPI").html("PROCESSING <i class='fa fa-spinner fa-spin'></i>");
+            var array=[];
+            var textAPI="";
+            $.ajax({
+                url: "ImageCustomVision.php",
+                type: "POST",
+                data: form,
+                contentType: false,
+                cache: false,
+                processData:false,
+            success: function(data){
+                var dataAPI=[];
+                if(data){
+                    var dataAPI=JSON.parse(data);
+                }
+                for (var item=0;item<dataAPI.length;item++){
+                    var dataNum=Number(dataAPI[item]["Probability"]);
+                    var textNum=dataNum*100;
+                    if(dataNum>0.7){
+                        textAPI=textAPI+"It's "+dataAPI[item]["Tag"]+" picture , ("+textNum.toFixed(2)+"%) Exact<br>";
+                    }else if(dataNum>0.6){
+                        textAPI=textAPI+"Sorry <i class='far fa-sad-tear'></i>, This image does not match any person  <br>";
+                    }
+                }
+                if(textAPI!==""){
+                    $("#textAPI").html(textAPI);
+                }else{
+                    $("#textAPI").html("Sorry <i class='far fa-sad-tear'></i>, This image does not match any person  <br>");
+                }
+                $("#image").html("Search <i class='fas fa-search'></i>");
+            }});
+        };
+    </script>
+   
+
+   
+</body>
+
+
+</html>
